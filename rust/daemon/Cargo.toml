@@ -1,0 +1,9 @@
+[package]
+name = "server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+thiserror = "1.0.63"
+mio = { version = "1.0.2", features = ["net", "os-ext", "os-poll"] }
+protocol = { path = '../protocol-core/' }
