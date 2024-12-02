@@ -30,7 +30,25 @@ Conn *connection_create(int fd) {
   return conn;
 }
 
-static bool is_read_complete(Conn *conn) { return true; }
+static bool is_read_complete(Conn *conn) {
+  size_t len = 0;
+  if (*(char *)vector_get_at(&conn->rbuf, 0) == '*') {
+    len = atol((char *)vector_get_at(&conn->rbuf, 1));
+  } else {
+    len = atol((char *)vector_get_at(&conn->rbuf, 0));
+  }
+
+  if (!len || len > conn->rbuf_size) {
+    return false;
+  }
+  if (len < conn->rbuf_size) {
+    ERROR(false, "invalid message sent")
+    conn->state = STATE_END;
+    return false;
+  }
+
+  return true;
+}
 
 // force if connection terminated before complete
 //  command data transfer
